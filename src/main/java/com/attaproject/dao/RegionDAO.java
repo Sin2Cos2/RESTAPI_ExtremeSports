@@ -22,4 +22,20 @@ public class RegionDAO extends JdbcDaoSupport {
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().query(sql, mapper, id);
     }
+
+    public List<Region> getRegions() {
+        String sql = RegionMapper.BASE_SQL;
+        RegionMapper mapper = new RegionMapper();
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().query(sql, mapper);
+    }
+
+    public Region getRegion(String name) {
+        String sql = RegionMapper.BASE_SQL + " where r.region_name like ?";
+        RegionMapper regionMapper = new RegionMapper();
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().queryForObject(sql, regionMapper, name);
+    }
 }

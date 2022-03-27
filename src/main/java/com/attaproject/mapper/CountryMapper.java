@@ -8,8 +8,7 @@ import java.sql.SQLException;
 
 public class CountryMapper implements RowMapper<Country> {
 
-    public static final String BASE_SQL =
-            "Select c.id, c.country_name from countries c";
+    public static final String BASE_SQL = "Select * from countries c";
 
     @Override
     public Country mapRow(ResultSet rs, int rowNum) throws SQLException {

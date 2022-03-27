@@ -1,8 +1,6 @@
 package com.attaproject.controller;
 
 import com.attaproject.dao.CountryDAO;
-import com.attaproject.dao.RegionDAO;
-import com.attaproject.mapper.CountryMapper;
 import com.attaproject.model.Country;
 import com.attaproject.responseForm.CountryResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
@@ -16,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "countries")
+@RequestMapping(value = "/countries")
 public class CountryController {
 
     @Autowired
@@ -38,9 +36,10 @@ public class CountryController {
         return countryResponseForms;
     }
 
-    @GetMapping(value = "/{id}")
-    public Country getCountry(@PathVariable("id") int id){
+    @GetMapping(value = "/{country}")
+    public CountryResponseForm getCountry(@PathVariable("country") String c){
 
-        return countryDAO.getCountry(id);
+        Country country = countryDAO.getCountry(c);
+        return new CountryResponseForm(country, regionController.getRegionsByCountryId(country.getId()));
     }
 }

@@ -25,7 +25,16 @@ public class CountryDAO extends JdbcDaoSupport{
         return this.getJdbcTemplate().query(sql, countryMapper, new Object[]{});
     }
 
-    public Country getCountry(@PathVariable("id") int id){
+    public Country getCountry(String name){
+
+        String sql = CountryMapper.BASE_SQL + " where c.country_name like ?";
+        CountryMapper mapper = new CountryMapper();
+        assert this.getJdbcTemplate() != null;
+
+        return this.getJdbcTemplate().queryForObject(sql, mapper, name);
+    }
+
+    public Country getCountry(Integer id){
 
         String sql = CountryMapper.BASE_SQL + " where c.id = ?";
         CountryMapper mapper = new CountryMapper();

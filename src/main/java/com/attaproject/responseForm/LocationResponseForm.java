@@ -1,39 +1,20 @@
 package com.attaproject.responseForm;
 
-import com.attaproject.model.Country;
 import com.attaproject.model.Location;
 import com.attaproject.model.Region;
 
 import java.util.List;
 
-public class LocationResponseForm {
+public class LocationResponseForm extends Location {
 
-    private Location location;
-    private Country country;
     private Region region;
     private List<SportResponseForm> sports;
 
-    public LocationResponseForm(Location location, Country country, Region region, List<SportResponseForm> sports) {
-        this.location = location;
-        this.country = country;
+    public LocationResponseForm(Location location, Region region, List<SportResponseForm> sports) {
+        super(location.getId(), location.getName(), location.getStartDate(),
+                location.getEndDate(), location.getRegionId(), location.getCountryId());
         this.region = region;
         this.sports = sports;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
     }
 
     public Region getRegion() {

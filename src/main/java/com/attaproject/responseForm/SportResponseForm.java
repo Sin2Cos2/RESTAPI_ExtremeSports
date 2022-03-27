@@ -2,22 +2,13 @@ package com.attaproject.responseForm;
 
 import com.attaproject.model.Sport;
 
-public class SportResponseForm {
+public class SportResponseForm extends Sport{
 
-    private Sport sport;
     private Double price;
 
     public SportResponseForm(Sport sport, Double price) {
-        this.sport = sport;
+        super(sport.getId(), sport.getName());
         this.price = price;
-    }
-
-    public Sport getSport() {
-        return sport;
-    }
-
-    public void setSport(Sport sport) {
-        this.sport = sport;
     }
 
     public Double getPrice() {
