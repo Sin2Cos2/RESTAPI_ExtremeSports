@@ -29,7 +29,7 @@ public class CountryController {
         List<CountryResponseForm> countryResponseForms = new ArrayList<>();
 
         for(Country country : countries){
-            List<RegionResponseForm> regions = regionController.getRegionsByCountryId(country.getId());
+            List<RegionResponseForm> regions = regionController.getRegions(country.getId());
             countryResponseForms.add(new CountryResponseForm(country, regions));
         }
 
@@ -40,6 +40,6 @@ public class CountryController {
     public CountryResponseForm getCountry(@PathVariable("country") String c){
 
         Country country = countryDAO.getCountry(c);
-        return new CountryResponseForm(country, regionController.getRegionsByCountryId(country.getId()));
+        return new CountryResponseForm(country, regionController.getRegions(country.getId()));
     }
 }

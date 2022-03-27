@@ -1,9 +1,12 @@
 package com.attaproject.controller;
 
 import com.attaproject.dao.CountryDAO;
+import com.attaproject.dao.LocationDAO;
 import com.attaproject.dao.RegionDAO;
 import com.attaproject.model.Country;
+import com.attaproject.model.Location;
 import com.attaproject.model.Region;
+import com.attaproject.responseForm.LocationResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,15 +24,15 @@ public class RegionController {
     @Autowired
     private RegionDAO regionDAO;
     @Autowired
-    private CountryDAO countryDAO;
+    private LocationController locationController;
 
-    public List<RegionResponseForm> getRegionsByCountryId(Integer id){
+    public List<RegionResponseForm> getRegions(Integer id){
         List<Region> regions = regionDAO.getRegionsByCountryId(id);
         List<RegionResponseForm> regionResponseForms = new ArrayList<>();
 
         for(Region region : regions){
-            //TODO: Нужно ли тут добавлять страну? Добавить города
-            regionResponseForms.add(new RegionResponseForm(region,  null));
+            List<LocationResponseForm> locations = locationController.getLocations(region.getId());
+            regionResponseForms.add(new RegionResponseForm(region,  locations));
         }
 
         return regionResponseForms;
@@ -42,8 +45,8 @@ public class RegionController {
         List<RegionResponseForm> regionResponseForms = new ArrayList<>();
 
         for(Region region : regions) {
-            //TODO: добавить города
-            regionResponseForms.add((new RegionResponseForm(region, null)));
+            List<LocationResponseForm> locations = locationController.getLocations(region.getId());
+            regionResponseForms.add((new RegionResponseForm(region, locations)));
         }
 
         return regionResponseForms;
@@ -53,8 +56,7 @@ public class RegionController {
     public RegionResponseForm getRegion(@PathVariable("name") String name){
 
         Region region = regionDAO.getRegion(name);
-        //TODO: добавить города
-
+        List<LocationResponseForm> locations = locationController.getLocations(region.getId());
         return new RegionResponseForm(region, null);
     }
 
