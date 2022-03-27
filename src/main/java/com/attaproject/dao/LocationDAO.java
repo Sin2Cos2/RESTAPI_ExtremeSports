@@ -1,7 +1,9 @@
 package com.attaproject.dao;
 
 import com.attaproject.mapper.LocationMapper;
+import com.attaproject.mapper.LocationSportMapper;
 import com.attaproject.model.Location;
+import com.attaproject.model.LocationSport;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -41,5 +43,22 @@ public class LocationDAO extends JdbcDaoSupport {
 
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().query(sql, locationMapper, regionId);
+    }
+
+    public Location getLocation(int locationId) {
+
+        String sql = LocationMapper.BASE_SQL + " where l.id = ?";
+        LocationMapper locationMapper = new LocationMapper();
+
+        return this.getJdbcTemplate().queryForObject(sql, locationMapper, locationId);
+    }
+
+    public List<LocationSport> getLocationsSports(int locationId) {
+
+        String sql = LocationSportMapper.BASE_SQL + " where lxs.location_id = ?";
+        LocationSportMapper mapper = new LocationSportMapper();
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().query(sql, mapper, locationId);
     }
 }

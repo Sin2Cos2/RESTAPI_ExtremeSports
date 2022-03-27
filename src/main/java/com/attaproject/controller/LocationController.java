@@ -2,10 +2,11 @@ package com.attaproject.controller;
 
 import com.attaproject.dao.LocationDAO;
 import com.attaproject.model.Location;
+import com.attaproject.model.LocationSport;
+import com.attaproject.model.Sport;
 import com.attaproject.responseForm.LocationResponseForm;
-import jdk.dynalink.linker.LinkerServices;
+import com.attaproject.responseForm.LocationSportResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,8 @@ public class LocationController {
 
     @Autowired
     private LocationDAO locationDAO;
+    @Autowired
+    private SportController sportController;
 
     @GetMapping
     public List<LocationResponseForm> getLocations(){
@@ -27,19 +30,30 @@ public class LocationController {
         List<Location> locations = locationDAO.getLocations();
         List<LocationResponseForm> responseForms = new ArrayList<>();
         for(Location location : locations){
-            //TODO: добавить спорт
-            responseForms.add(new LocationResponseForm(location, null));
+            List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+            responseForms.add(new LocationResponseForm(location, response));
         }
 
         return responseForms;
+    }
+
+    private List<LocationSportResponseForm> getLocationSportResponseForms(Location location) {
+        List<LocationSport> locationSports = locationDAO.getLocationsSports(location.getId());
+        List<LocationSportResponseForm> response = new ArrayList<>();
+        for (LocationSport locationSport : locationSports) {
+            Sport sport = sportController.getSport(locationSport.getSportId());
+            response.add(new LocationSportResponseForm(sport, locationSport.getPrice(),
+                    locationSport.getStartDate(), locationSport.getEndDate()));
+        }
+        return response;
     }
 
     @GetMapping(value = "/{name}")
     public LocationResponseForm getLocation(@PathVariable("name") String name){
 
         Location location = locationDAO.getLocation(name);
-        //TODO: добавить спорт
-        return new LocationResponseForm(location, null);
+        List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+        return new LocationResponseForm(location, response);
     }
 
     public List<LocationResponseForm> getLocations(int region_id) {
@@ -47,10 +61,15 @@ public class LocationController {
         List<Location> locations = locationDAO.getLocations(region_id);
         List<LocationResponseForm> responseForms = new ArrayList<>();
         for (Location location : locations) {
-            //TODO: добавить спорт
-            responseForms.add(new LocationResponseForm(location, null));
+            List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+            responseForms.add(new LocationResponseForm(location, response));
         }
 
         return responseForms;
+    }
+
+    public Location getLocation(int locationId) {
+
+        return locationDAO.getLocation(locationId);
     }
 }
