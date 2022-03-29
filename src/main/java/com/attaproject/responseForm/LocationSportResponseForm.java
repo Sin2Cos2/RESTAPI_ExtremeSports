@@ -4,7 +4,6 @@ import com.attaproject.model.Sport;
 
 import java.sql.Date;
 
-//Класс используется как список спортов практикуемых в определенном городе
 public class LocationSportResponseForm extends Sport{
 
     private Double price;

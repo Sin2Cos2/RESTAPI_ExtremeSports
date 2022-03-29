@@ -2,6 +2,7 @@ package com.attaproject.controller;
 
 import com.attaproject.dao.CountryDAO;
 import com.attaproject.model.Country;
+import com.attaproject.requestForm.CountryRequest;
 import com.attaproject.responseForm.CountryResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,14 @@ public class CountryController {
 
         Country country = countryDAO.getCountry(c);
         return new CountryResponseForm(country, regionController.getRegions(country.getId()));
+    }
+
+    //POST requests
+    @PostMapping
+    public ResponseEntity<String> addCountry(@RequestBody CountryRequest country){
+        return countryDAO.addCountry(country) ?
+                new ResponseEntity<>("Country have been added successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
     //DELETE requests

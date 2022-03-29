@@ -1,9 +1,8 @@
 package com.attaproject.controller;
 
 import com.attaproject.dao.LocationDAO;
-import com.attaproject.model.Location;
-import com.attaproject.model.LocationSport;
-import com.attaproject.model.Sport;
+import com.attaproject.model.*;
+import com.attaproject.requestForm.LocationRequest;
 import com.attaproject.responseForm.LocationResponseForm;
 import com.attaproject.responseForm.LocationSportResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,10 @@ public class LocationController {
     private LocationDAO locationDAO;
     @Autowired
     private SportController sportController;
+    @Autowired
+    private RegionController regionController;
+    @Autowired
+    private CountryController countryController;
 
     //GET request
     @GetMapping
@@ -45,7 +48,18 @@ public class LocationController {
         return new LocationResponseForm(location, response);
     }
 
-    //DELETE request
+    //POST requests
+    @PostMapping
+    public ResponseEntity<String> addLocation(@RequestBody LocationRequest location){
+        Region region = regionController.getRegion(location.getRegionName());
+        Country country = countryController.getCountry(location.getCountryName());
+
+        return locationDAO.addLocation(location, region, country) ?
+                new ResponseEntity<>("Location have been added successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
+
+    //DELETE requests
     @DeleteMapping(value = "/{name}")
     public ResponseEntity<String> deleteLocation(@PathVariable("name") String name){
         return locationDAO.deleteLocation(name) ?

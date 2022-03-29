@@ -1,11 +1,10 @@
 package com.attaproject.controller;
 
-import com.attaproject.dao.CountryDAO;
-import com.attaproject.dao.LocationDAO;
 import com.attaproject.dao.RegionDAO;
 import com.attaproject.model.Country;
 import com.attaproject.model.Location;
 import com.attaproject.model.Region;
+import com.attaproject.requestForm.RegionRequest;
 import com.attaproject.responseForm.LocationResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,8 @@ public class RegionController {
     private RegionDAO regionDAO;
     @Autowired
     private LocationController locationController;
+    @Autowired
+    private CountryController countryController;
 
     //GET requests
     @GetMapping
@@ -46,6 +47,16 @@ public class RegionController {
         Region region = regionDAO.getRegion(name);
         List<LocationResponseForm> locations = locationController.getLocations(region.getId());
         return new RegionResponseForm(region, null);
+    }
+
+    //POST requests
+    @PostMapping
+    public ResponseEntity<String> addRegion(@RequestBody RegionRequest region){
+        Country country = countryController.getCountry(region.getCountryName());
+
+        return regionDAO.addRegion(region, country) ?
+                new ResponseEntity<>("Region have been added successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
     //DELETE requests

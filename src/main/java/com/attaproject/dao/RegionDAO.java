@@ -1,7 +1,9 @@
 package com.attaproject.dao;
 
 import com.attaproject.mapper.RegionMapper;
+import com.attaproject.model.Country;
 import com.attaproject.model.Region;
+import com.attaproject.requestForm.RegionRequest;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -44,5 +46,12 @@ public class RegionDAO extends JdbcDaoSupport {
 
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().update(sql, region.getId()) == 1;
+    }
+
+    public boolean addRegion(RegionRequest region, Country country) {
+        String sql = RegionMapper.POST_SQL + " values(?, ?)";
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().update(sql, region.getName(), country.getId()) == 1;
     }
 }

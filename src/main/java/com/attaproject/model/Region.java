@@ -6,7 +6,7 @@ public class Region {
     private String name;
     private int countryId;
 
-    public Region(int id, String name, int countryId) {
+    public Region(Integer id, String name, int countryId) {
         this.id = id;
         this.name = name;
         this.countryId = countryId;

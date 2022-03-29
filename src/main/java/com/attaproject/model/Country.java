@@ -1,13 +1,11 @@
 package com.attaproject.model;
 
-import java.util.List;
-
 public class Country {
 
     private int id;
     private String name;
 
-    public Country(int id, String name) {
+    public Country(Integer id, String name) {
         this.id = id;
         this.name = name;
     }

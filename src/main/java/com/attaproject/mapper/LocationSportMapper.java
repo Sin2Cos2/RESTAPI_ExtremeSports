@@ -11,6 +11,7 @@ public class LocationSportMapper implements RowMapper<LocationSport> {
 
     public static final String BASE_SQL = "SELECT * from locations_x_sports lxs";
     public static final String DELETE_SQL = "DELETE from locations_x_sports lxs";
+    public static final String POST_SQL = "INSERT INTO locations_x_sports";
 
     @Override
     public LocationSport mapRow(ResultSet rs, int rowNum) throws SQLException {

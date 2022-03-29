@@ -1,9 +1,14 @@
 package com.attaproject.dao;
 
+import com.attaproject.controller.LocationController;
 import com.attaproject.mapper.LocationSportMapper;
 import com.attaproject.mapper.SportMapper;
+import com.attaproject.model.Location;
 import com.attaproject.model.LocationSport;
 import com.attaproject.model.Sport;
+import com.attaproject.requestForm.SportLocationRequest;
+import com.attaproject.requestForm.SportRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +17,9 @@ import java.util.List;
 
 @Repository
 public class SportDAO extends JdbcDaoSupport {
+
+    @Autowired
+    LocationController locationController;
 
     public SportDAO(DataSource dataSource) {
         this.setDataSource(dataSource);
@@ -60,5 +68,24 @@ public class SportDAO extends JdbcDaoSupport {
 
         sql = SportMapper.DELETE_SQL + " where s.id = ?";
         return this.getJdbcTemplate().update(sql, sport.getId()) == 1;
+    }
+
+    public boolean addSport(SportRequest sport) {
+        String sql = SportMapper.POST_SQL + " values(?)";
+        this.getJdbcTemplate().update(sql, sport.getName());
+
+        Sport s = this.getSport(sport.getName());
+        assert this.getJdbcTemplate() != null;
+
+        sql = LocationSportMapper.POST_SQL + " values(?, ?, ?, ?, ?)";
+        Object[] objects;
+        for (SportLocationRequest location : sport.getLocations()) {
+            Location loc = locationController.getLocation(location.getName());
+            objects = new Object[]{loc.getId(), s.getId(),
+                    location.getPrice(), location.getStartDate(), location.getEndDate()};
+            this.getJdbcTemplate().update(sql, objects);
+        }
+
+        return true;
     }
 }

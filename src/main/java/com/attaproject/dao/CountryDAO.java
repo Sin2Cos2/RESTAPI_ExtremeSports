@@ -3,6 +3,7 @@ package com.attaproject.dao;
 import com.attaproject.controller.CountryController;
 import com.attaproject.mapper.CountryMapper;
 import com.attaproject.model.Country;
+import com.attaproject.requestForm.CountryRequest;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +49,12 @@ public class CountryDAO extends JdbcDaoSupport{
 
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().update(sql, country.getId()) == 1;
+    }
+
+    public boolean addCountry(CountryRequest country) {
+        String sql = CountryMapper.POST_SQL + " values(?)";
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().update(sql, country.getName()) == 1;
     }
 }

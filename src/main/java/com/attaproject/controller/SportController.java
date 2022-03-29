@@ -4,6 +4,7 @@ import com.attaproject.dao.SportDAO;
 import com.attaproject.model.Location;
 import com.attaproject.model.LocationSport;
 import com.attaproject.model.Sport;
+import com.attaproject.requestForm.SportRequest;
 import com.attaproject.responseForm.SportLocationResponseForm;
 import com.attaproject.responseForm.SportResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,15 @@ public class SportController {
         Sport sport = sportDAO.getSport(name);
         List<SportLocationResponseForm> response = getSportLocationResponseForms(sport);
         return new SportResponseForm(sport, response);
+    }
+
+    //POST requests
+    @PostMapping
+    public ResponseEntity<String> addSport(@RequestBody SportRequest sport){
+
+        return sportDAO.addSport(sport) ?
+                new ResponseEntity<>("Sport have been added successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
     //DELETE requests

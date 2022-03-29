@@ -7,7 +7,7 @@ public class Location {
     private int regionId;
     private int countryId;
 
-    public Location(int id, String name, int regionId, int countryId) {
+    public Location(Integer id, String name, int regionId, int countryId) {
         this.id = id;
         this.name = name;
         this.regionId = regionId;

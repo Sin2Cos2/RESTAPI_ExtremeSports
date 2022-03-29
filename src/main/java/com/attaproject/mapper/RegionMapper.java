@@ -10,6 +10,7 @@ public class RegionMapper implements RowMapper<Region> {
 
     public static final String BASE_SQL = "Select * from regions r";
     public static final String DELETE_SQL = "DELETE from regions r";
+    public static final String POST_SQL = "INSERT INTO regions(region_name, country_id)";
 
     @Override
     public Region mapRow(ResultSet rs, int rowNum) throws SQLException {
