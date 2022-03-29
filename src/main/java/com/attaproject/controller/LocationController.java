@@ -59,6 +59,15 @@ public class LocationController {
                 new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
+    //PUT REQUEST
+    @PutMapping
+    public ResponseEntity<String> updateLocation(@RequestBody LocationRequest location){
+
+        return locationDAO.updateLocation(location) ?
+        new ResponseEntity<>("Location have been updated successfully", HttpStatus.OK) :
+        new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
+
     //DELETE requests
     @DeleteMapping(value = "/{name}")
     public ResponseEntity<String> deleteLocation(@PathVariable("name") String name){

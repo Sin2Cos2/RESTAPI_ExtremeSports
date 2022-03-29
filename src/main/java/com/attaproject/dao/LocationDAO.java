@@ -18,7 +18,7 @@ public class LocationDAO extends JdbcDaoSupport {
     @Autowired
     private SportDAO sportDAO;
 
-    public LocationDAO(DataSource dataSource){
+    public LocationDAO(DataSource dataSource) {
         this.setDataSource(dataSource);
     }
 
@@ -81,20 +81,59 @@ public class LocationDAO extends JdbcDaoSupport {
     public boolean addLocation(LocationRequest location, Region region, Country country) {
         String sql = LocationMapper.POST_SQL + " values(?, ?, ?)";
         assert this.getJdbcTemplate() != null;
-        this.getJdbcTemplate().update(sql, location.getName(),region.getId(), country.getId());
+        this.getJdbcTemplate().update(sql, location.getName(), region.getId(), country.getId());
 
         sql = LocationSportMapper.POST_SQL + " values(?, ?, ?, ?, ?)";
         Location loc = this.getLocation(location.getName());
         Object[] objects;
         Sport sport;
-        for(LocationSportRequest s : location.getLocationSport()){
+        for (LocationSportRequest s : location.getLocationSport()) {
             sport = sportDAO.getSport(s.getName());
-            if(sport == null)
+            if (sport == null)
                 continue;
             objects = new Object[]{loc.getId(), sport.getId(), s.getPrice(), s.getStartDate(), s.getEndDate()};
             this.getJdbcTemplate().update(sql, objects);
         }
 
         return true;
+    }
+
+    //TODO: DELETE для определенного спорта из города или города из спорта
+    public boolean updateLocation(LocationRequest location) {
+        String sql = LocationSportMapper.UPDATE_SQL + " SET " +
+                " price = ?, start_date = ?, end_date = ? " +
+                "WHERE location_id = ? AND sport_id = ?";
+        Object[] objects;
+        for (LocationSportRequest sport : location.getLocationSport()) {
+            objects = checkForUpdates(location, sport);
+
+            assert this.getJdbcTemplate() != null;
+            this.getJdbcTemplate().update(sql, objects);
+        }
+
+        return true;
+    }
+
+    private Object[] checkForUpdates(LocationRequest location, LocationSportRequest sport) {
+        Object[] objects;
+        LocationSport locationSport = this.getLocationSports(location.getName(), sport.getName());
+
+        locationSport.setPrice(sport.getPrice() == null ? locationSport.getPrice() : sport.getPrice());
+        locationSport.setStartDate(sport.getStartDate() == null ? locationSport.getStartDate() : sport.getStartDate());
+        locationSport.setEndDate(sport.getEndDate() == null ? locationSport.getEndDate() : sport.getEndDate());
+
+        objects = new Object[]{locationSport.getPrice(), locationSport.getStartDate(), locationSport.getEndDate(),
+        locationSport.getLocationId(), locationSport.getSportId()};
+        return objects;
+    }
+
+    private LocationSport getLocationSports(String locationName, String sportName) {
+        Location location = this.getLocation(locationName);
+        Sport sport = sportDAO.getSport(sportName);
+        String sql = LocationSportMapper.BASE_SQL + " WHERE location_id = ? AND sport_id = ?";
+        LocationSportMapper mapper = new LocationSportMapper();
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().queryForObject(sql, mapper, location.getId(), sport.getId());
     }
 }
