@@ -88,4 +88,43 @@ public class SportDAO extends JdbcDaoSupport {
 
         return true;
     }
+
+    public boolean updateSport(SportRequest sport) {
+        String sql = LocationSportMapper.UPDATE_SQL + " SET " +
+                " price = ?, start_date = ?, end_date = ? " +
+                "WHERE location_id = ? AND sport_id = ?";
+        Object[] objects;
+        for (SportLocationRequest location : sport.getLocations()) {
+            objects = checkForUpdates(sport, location);
+
+            assert this.getJdbcTemplate() != null;
+            this.getJdbcTemplate().update(sql, objects);
+        }
+
+        return true;
+    }
+
+    private Object[] checkForUpdates(SportRequest sport, SportLocationRequest location) {
+        Object[] objects;
+        LocationSport locationSport = this.getSportLocations(sport.getName(), location.getName());
+
+        locationSport.setPrice(location.getPrice() == null ? locationSport.getPrice() : location.getPrice());
+        locationSport.setStartDate(location.getStartDate() == null ? locationSport.getStartDate() : location.getStartDate());
+        locationSport.setEndDate(location.getEndDate() == null ? locationSport.getEndDate() : location.getEndDate());
+
+        objects = new Object[]{locationSport.getPrice(), locationSport.getStartDate(), locationSport.getEndDate(),
+                locationSport.getLocationId(), locationSport.getSportId()};
+        return objects;
+    }
+
+    private LocationSport getSportLocations(String sportName, String locationName) {
+        System.out.println(sportName);
+        Sport sport = this.getSport(sportName);
+        Location location = locationController.getLocation(locationName);
+        String sql = LocationSportMapper.BASE_SQL + " WHERE location_id = ? AND sport_id = ?";
+        LocationSportMapper mapper = new LocationSportMapper();
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().queryForObject(sql, mapper, location.getId(), sport.getId());
+    }
 }

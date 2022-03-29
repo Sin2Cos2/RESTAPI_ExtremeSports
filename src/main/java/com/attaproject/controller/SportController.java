@@ -55,6 +55,15 @@ public class SportController {
                 new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
+    //UPDATE requests
+    @PutMapping
+    public ResponseEntity<String> updateSport(@RequestBody SportRequest sport){
+
+        return sportDAO.updateSport(sport) ?
+                new ResponseEntity<>("Sport have been updated successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
+
     //DELETE requests
     @DeleteMapping(value = "/{name}")
     public ResponseEntity<String> deleteSport(@PathVariable("name") String name){
