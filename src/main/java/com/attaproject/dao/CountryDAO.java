@@ -42,4 +42,11 @@ public class CountryDAO extends JdbcDaoSupport{
 
         return this.getJdbcTemplate().queryForObject(sql, mapper, id);
     }
+
+    public boolean deleteCountry(Country country) {
+        String sql = CountryMapper.DELETE_SQL + " where c.id = ?";
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().update(sql, country.getId()) == 1;
+    }
 }

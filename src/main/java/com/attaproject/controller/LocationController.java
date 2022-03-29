@@ -7,10 +7,9 @@ import com.attaproject.model.Sport;
 import com.attaproject.responseForm.LocationResponseForm;
 import com.attaproject.responseForm.LocationSportResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +23,34 @@ public class LocationController {
     @Autowired
     private SportController sportController;
 
+    //GET request
     @GetMapping
-    public List<LocationResponseForm> getLocations(){
+    public List<LocationResponseForm> getLocations() {
 
         List<Location> locations = locationDAO.getLocations();
         List<LocationResponseForm> responseForms = new ArrayList<>();
-        for(Location location : locations){
+        for (Location location : locations) {
             List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
             responseForms.add(new LocationResponseForm(location, response));
         }
 
         return responseForms;
+    }
+
+    @GetMapping(value = "/{name}")
+    public LocationResponseForm getLocation(@PathVariable("name") String name) {
+
+        Location location = locationDAO.getLocation(name);
+        List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+        return new LocationResponseForm(location, response);
+    }
+
+    //DELETE request
+    @DeleteMapping(value = "/{name}")
+    public ResponseEntity<String> deleteLocation(@PathVariable("name") String name){
+        return locationDAO.deleteLocation(name) ?
+                new ResponseEntity<>("Location have been successfully removed", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
     private List<LocationSportResponseForm> getLocationSportResponseForms(Location location) {
@@ -46,14 +62,6 @@ public class LocationController {
                     locationSport.getStartDate(), locationSport.getEndDate()));
         }
         return response;
-    }
-
-    @GetMapping(value = "/{name}")
-    public LocationResponseForm getLocation(@PathVariable("name") String name){
-
-        Location location = locationDAO.getLocation(name);
-        List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
-        return new LocationResponseForm(location, response);
     }
 
     public List<LocationResponseForm> getLocations(int region_id) {

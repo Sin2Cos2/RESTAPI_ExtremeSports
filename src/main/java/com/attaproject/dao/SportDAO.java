@@ -51,4 +51,14 @@ public class SportDAO extends JdbcDaoSupport {
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().queryForObject(sql, sportMapper, sportId);
     }
+
+    public boolean deleteSport(String name) {
+        Sport sport = this.getSport(name);
+        String sql = LocationSportMapper.DELETE_SQL + " where lxs.sport_id = ?";
+        assert this.getJdbcTemplate() != null;
+        this.getJdbcTemplate().update(sql, sport.getId());
+
+        sql = SportMapper.DELETE_SQL + " where s.id = ?";
+        return this.getJdbcTemplate().update(sql, sport.getId()) == 1;
+    }
 }

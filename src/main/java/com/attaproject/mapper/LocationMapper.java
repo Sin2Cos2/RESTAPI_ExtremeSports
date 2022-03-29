@@ -10,6 +10,7 @@ import java.sql.SQLException;
 public class LocationMapper implements RowMapper<Location> {
 
     public static final String BASE_SQL = "Select * from locations l";
+    public static final String DELETE_SQL = "DELETE from locations l";
 
     @Override
     public Location mapRow(ResultSet rs, int rowNum) throws SQLException {

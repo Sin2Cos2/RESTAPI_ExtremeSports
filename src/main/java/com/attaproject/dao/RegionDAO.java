@@ -38,4 +38,11 @@ public class RegionDAO extends JdbcDaoSupport {
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().queryForObject(sql, regionMapper, name);
     }
+
+    public boolean deleteRegion(Region region) {
+        String sql = RegionMapper.DELETE_SQL + " where r.id = ?";
+
+        assert this.getJdbcTemplate() != null;
+        return this.getJdbcTemplate().update(sql, region.getId()) == 1;
+    }
 }

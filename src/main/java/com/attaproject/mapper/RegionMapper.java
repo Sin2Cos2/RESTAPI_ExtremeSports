@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 public class RegionMapper implements RowMapper<Region> {
 
-    public static final String BASE_SQL =
-            "Select * from regions r";
+    public static final String BASE_SQL = "Select * from regions r";
+    public static final String DELETE_SQL = "DELETE from regions r";
 
     @Override
     public Region mapRow(ResultSet rs, int rowNum) throws SQLException {

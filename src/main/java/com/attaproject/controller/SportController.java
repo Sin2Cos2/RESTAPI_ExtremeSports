@@ -7,10 +7,9 @@ import com.attaproject.model.Sport;
 import com.attaproject.responseForm.SportLocationResponseForm;
 import com.attaproject.responseForm.SportResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ public class SportController {
     @Autowired
     private LocationController locationController;
 
+    //GET requests
     @GetMapping
     public List<SportResponseForm> getSports(){
 
@@ -37,6 +37,22 @@ public class SportController {
         return responseForms;
     }
 
+    @GetMapping(value = "/{name}")
+    public SportResponseForm getSport(@PathVariable("name") String name){
+
+        Sport sport = sportDAO.getSport(name);
+        List<SportLocationResponseForm> response = getSportLocationResponseForms(sport);
+        return new SportResponseForm(sport, response);
+    }
+
+    //DELETE requests
+    @DeleteMapping(value = "/{name}")
+    public ResponseEntity<String> deleteSport(@PathVariable("name") String name){
+        return sportDAO.deleteSport(name) ?
+                new ResponseEntity<>("Sport have been successfully removed", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
+
     private List<SportLocationResponseForm> getSportLocationResponseForms(Sport sport) {
         List<LocationSport> responseFormList = sportDAO.getSportLocation(sport.getId());
         List<SportLocationResponseForm> response = new ArrayList<>();
@@ -45,14 +61,6 @@ public class SportController {
             response.add(new SportLocationResponseForm(location, locationSport.getPrice(),
                     locationSport.getStartDate(), locationSport.getEndDate()));
         } return response;
-    }
-
-    @GetMapping(value = "/{name}")
-    public SportResponseForm getSport(@PathVariable("name") String name){
-
-        Sport sport = sportDAO.getSport(name);
-        List<SportLocationResponseForm> response = getSportLocationResponseForms(sport);
-        return new SportResponseForm(sport, response);
     }
 
     public Sport getSport(int sportId) {

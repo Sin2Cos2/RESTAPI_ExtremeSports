@@ -9,10 +9,9 @@ import com.attaproject.model.Region;
 import com.attaproject.responseForm.LocationResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +25,7 @@ public class RegionController {
     @Autowired
     private LocationController locationController;
 
-    public List<RegionResponseForm> getRegions(Integer id){
-        List<Region> regions = regionDAO.getRegionsByCountryId(id);
-        List<RegionResponseForm> regionResponseForms = new ArrayList<>();
-
-        for(Region region : regions){
-            List<LocationResponseForm> locations = locationController.getLocations(region.getId());
-            regionResponseForms.add(new RegionResponseForm(region,  locations));
-        }
-
-        return regionResponseForms;
-    }
-
+    //GET requests
     @GetMapping
     public List<RegionResponseForm> getRegions(){
 
@@ -58,6 +46,33 @@ public class RegionController {
         Region region = regionDAO.getRegion(name);
         List<LocationResponseForm> locations = locationController.getLocations(region.getId());
         return new RegionResponseForm(region, null);
+    }
+
+    //DELETE requests
+    @DeleteMapping(value = "/{name}")
+    public ResponseEntity<String> deleteRegion(@PathVariable("name") String name){
+        Region region = regionDAO.getRegion(name);
+        List<LocationResponseForm> locations = locationController.getLocations(region.getId());
+
+        for (Location location : locations) {
+            locationController.deleteLocation(location.getName());
+        }
+
+        return regionDAO.deleteRegion(region) ?
+                new ResponseEntity<>("Region have been successfully removed", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
+
+    public List<RegionResponseForm> getRegions(Integer countryId){
+        List<Region> regions = regionDAO.getRegionsByCountryId(countryId);
+        List<RegionResponseForm> regionResponseForms = new ArrayList<>();
+
+        for(Region region : regions){
+            List<LocationResponseForm> locations = locationController.getLocations(region.getId());
+            regionResponseForms.add(new RegionResponseForm(region,  locations));
+        }
+
+        return regionResponseForms;
     }
 
 }

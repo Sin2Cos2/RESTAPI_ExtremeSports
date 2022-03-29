@@ -9,6 +9,7 @@ import java.sql.SQLException;
 public class CountryMapper implements RowMapper<Country> {
 
     public static final String BASE_SQL = "Select * from countries c";
+    public static final String DELETE_SQL = "DELETE from countries c";
 
     @Override
     public Country mapRow(ResultSet rs, int rowNum) throws SQLException {

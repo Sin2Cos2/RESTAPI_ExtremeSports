@@ -61,4 +61,16 @@ public class LocationDAO extends JdbcDaoSupport {
         assert this.getJdbcTemplate() != null;
         return this.getJdbcTemplate().query(sql, mapper, locationId);
     }
+
+    public Boolean deleteLocation(String name) {
+
+        Location location = this.getLocation(name);
+        String sql = LocationSportMapper.DELETE_SQL + " where location_id = ?";
+        assert this.getJdbcTemplate() != null;
+        this.getJdbcTemplate().update(sql, location.getId());
+
+        sql = LocationMapper.DELETE_SQL + " where l.id = ?";
+
+        return this.getJdbcTemplate().update(sql, location.getId()) == 1;
+    }
 }

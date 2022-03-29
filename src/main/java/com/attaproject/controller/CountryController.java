@@ -5,10 +5,9 @@ import com.attaproject.model.Country;
 import com.attaproject.responseForm.CountryResponseForm;
 import com.attaproject.responseForm.RegionResponseForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,13 @@ import java.util.List;
 @RequestMapping(value = "/countries")
 public class CountryController {
 
+    //TODO: Добавить для GET: /countries/name/regions/name/locations/name/sports
     @Autowired
     private CountryDAO countryDAO;
     @Autowired
     private RegionController regionController;
 
+    //GET requests
     @GetMapping
     public List<CountryResponseForm> getCountries(){
 
@@ -42,4 +43,20 @@ public class CountryController {
         Country country = countryDAO.getCountry(c);
         return new CountryResponseForm(country, regionController.getRegions(country.getId()));
     }
+
+    //DELETE requests
+    @DeleteMapping(value = "/{name}")
+    public ResponseEntity<String> deleteCountry(@PathVariable("name") String name){
+        Country country = countryDAO.getCountry(name);
+        List<RegionResponseForm> regions = regionController.getRegions(country.getId());
+
+        for (RegionResponseForm region : regions) {
+            regionController.deleteRegion(region.getName());
+        }
+
+        return countryDAO.deleteCountry(country) ?
+                new ResponseEntity<>("Country have been successfully removed", HttpStatus.OK) :
+                new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+    }
 }
+

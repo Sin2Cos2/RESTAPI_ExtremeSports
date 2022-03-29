@@ -9,6 +9,7 @@ import java.sql.SQLException;
 public class SportMapper implements RowMapper<Sport> {
 
     public static final String BASE_SQL = "SELECT * from sports s";
+    public static final String DELETE_SQL = "DELETE from sports s";
 
     @Override
     public Sport mapRow(ResultSet rs, int rowNum) throws SQLException {
