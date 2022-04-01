@@ -7,9 +7,9 @@ import java.util.List;
 
 public class LocationResponseForm extends Location {
 
-    private List<LocationSportResponseForm> sports;
+    private List<LocationSportResponseList> sports;
 
-    public LocationResponseForm(Location location, List<LocationSportResponseForm> sports) {
+    public LocationResponseForm(Location location, List<LocationSportResponseList> sports) {
         super(location.getId(), location.getName(), location.getRegionId(), location.getCountryId());
         this.sports = sports;
     }
@@ -19,11 +19,11 @@ public class LocationResponseForm extends Location {
         sports = new ArrayList<>();
     }
 
-    public List<LocationSportResponseForm> getSports() {
+    public List<LocationSportResponseList> getSports() {
         return sports;
     }
 
-    public void setSports(List<LocationSportResponseForm> sports) {
+    public void setSports(List<LocationSportResponseList> sports) {
         this.sports = sports;
     }
 }

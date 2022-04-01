@@ -6,18 +6,18 @@ import java.util.List;
 
 public class SportResponseForm extends Sport {
 
-    private List<SportLocationResponseForm> locations;
+    private List<SportLocationResponseList> locations;
 
-    public SportResponseForm(Sport sport, List<SportLocationResponseForm> responseFormList) {
+    public SportResponseForm(Sport sport, List<SportLocationResponseList> responseFormList) {
         super(sport.getId(), sport.getName());
         this.locations = responseFormList;
     }
 
-    public List<SportLocationResponseForm> getLocations() {
+    public List<SportLocationResponseList> getLocations() {
         return locations;
     }
 
-    public void setLocations(List<SportLocationResponseForm> locations) {
+    public void setLocations(List<SportLocationResponseList> locations) {
         this.locations = locations;
     }
 }

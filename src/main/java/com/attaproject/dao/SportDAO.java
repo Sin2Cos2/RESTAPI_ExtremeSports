@@ -1,6 +1,7 @@
 package com.attaproject.dao;
 
 import com.attaproject.controller.LocationController;
+import com.attaproject.controller.LocationSportController;
 import com.attaproject.mapper.LocationSportMapper;
 import com.attaproject.mapper.SportMapper;
 import com.attaproject.model.Location;
@@ -19,7 +20,7 @@ import java.util.List;
 public class SportDAO extends JdbcDaoSupport {
 
     @Autowired
-    LocationController locationController;
+    private LocationSportController locationSportController;
 
     public SportDAO(DataSource dataSource) {
         this.setDataSource(dataSource);
@@ -44,11 +45,7 @@ public class SportDAO extends JdbcDaoSupport {
     }
 
     public List<LocationSport> getSportLocation(int sportId) {
-        String sql = LocationSportMapper.BASE_SQL + " where lxs.sport_id = ?";
-        LocationSportMapper mapper = new LocationSportMapper();
-
-        assert this.getJdbcTemplate() != null;
-        return this.getJdbcTemplate().query(sql, mapper, sportId);
+        return locationSportController.getSportLocation(sportId);
     }
 
     public Sport getSport(int sportId) {
@@ -62,9 +59,8 @@ public class SportDAO extends JdbcDaoSupport {
 
     public boolean deleteSport(String name) {
         Sport sport = this.getSport(name);
-        String sql = LocationSportMapper.DELETE_SQL + " where lxs.sport_id = ?";
-        assert this.getJdbcTemplate() != null;
-        this.getJdbcTemplate().update(sql, sport.getId());
+        locationSportController.deleteSport(sport);
+        String sql;
 
         sql = SportMapper.DELETE_SQL + " where s.id = ?";
         return this.getJdbcTemplate().update(sql, sport.getId()) == 1;
@@ -77,54 +73,11 @@ public class SportDAO extends JdbcDaoSupport {
         Sport s = this.getSport(sport.getName());
         assert this.getJdbcTemplate() != null;
 
-        sql = LocationSportMapper.POST_SQL + " values(?, ?, ?, ?, ?)";
-        Object[] objects;
-        for (SportLocationRequest location : sport.getLocations()) {
-            Location loc = locationController.getLocation(location.getName());
-            objects = new Object[]{loc.getId(), s.getId(),
-                    location.getPrice(), location.getStartDate(), location.getEndDate()};
-            this.getJdbcTemplate().update(sql, objects);
-        }
-
-        return true;
+        return locationSportController.addSport(sport, s);
     }
+    
 
     public boolean updateSport(SportRequest sport) {
-        String sql = LocationSportMapper.UPDATE_SQL + " SET " +
-                " price = ?, start_date = ?, end_date = ? " +
-                "WHERE location_id = ? AND sport_id = ?";
-        Object[] objects;
-        for (SportLocationRequest location : sport.getLocations()) {
-            objects = checkForUpdates(sport, location);
-
-            assert this.getJdbcTemplate() != null;
-            this.getJdbcTemplate().update(sql, objects);
-        }
-
-        return true;
-    }
-
-    private Object[] checkForUpdates(SportRequest sport, SportLocationRequest location) {
-        Object[] objects;
-        LocationSport locationSport = this.getSportLocations(sport.getName(), location.getName());
-
-        locationSport.setPrice(location.getPrice() == null ? locationSport.getPrice() : location.getPrice());
-        locationSport.setStartDate(location.getStartDate() == null ? locationSport.getStartDate() : location.getStartDate());
-        locationSport.setEndDate(location.getEndDate() == null ? locationSport.getEndDate() : location.getEndDate());
-
-        objects = new Object[]{locationSport.getPrice(), locationSport.getStartDate(), locationSport.getEndDate(),
-                locationSport.getLocationId(), locationSport.getSportId()};
-        return objects;
-    }
-
-    private LocationSport getSportLocations(String sportName, String locationName) {
-        System.out.println(sportName);
-        Sport sport = this.getSport(sportName);
-        Location location = locationController.getLocation(locationName);
-        String sql = LocationSportMapper.BASE_SQL + " WHERE location_id = ? AND sport_id = ?";
-        LocationSportMapper mapper = new LocationSportMapper();
-
-        assert this.getJdbcTemplate() != null;
-        return this.getJdbcTemplate().queryForObject(sql, mapper, location.getId(), sport.getId());
+        return locationSportController.updateSport(sport);
     }
 }

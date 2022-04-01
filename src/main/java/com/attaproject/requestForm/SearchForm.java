@@ -1,20 +1,23 @@
-package com.attaproject.responseForm;
+package com.attaproject.requestForm;
 
-import com.attaproject.model.Sport;
+import com.attaproject.responseForm.LocationSportResponseList;
 
 import java.sql.Date;
+import java.util.List;
 
-public class LocationSportResponseForm extends Sport{
+public class SearchForm {
 
-    private Double price;
     private Date startDate;
     private Date endDate;
+    List<String> sports;
 
-    public LocationSportResponseForm(Sport sport, Double price, Date startDate, Date endDate) {
-        super(sport.getId(), sport.getName());
-        this.price = price;
+    public SearchForm() {
+    }
+
+    public SearchForm(Date startDate, Date endDate, List<String> sports) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.sports = sports;
     }
 
     public Date getStartDate() {
@@ -33,11 +36,11 @@ public class LocationSportResponseForm extends Sport{
         this.endDate = endDate;
     }
 
-    public Double getPrice() {
-        return price;
+    public List<String> getSports() {
+        return sports;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setSports(List<String> sports) {
+        this.sports = sports;
     }
 }

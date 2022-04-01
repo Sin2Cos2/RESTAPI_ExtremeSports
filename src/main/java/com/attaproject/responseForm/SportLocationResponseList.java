@@ -4,13 +4,17 @@ import com.attaproject.model.Location;
 
 import java.sql.Date;
 
-public class SportLocationResponseForm extends Location {
+public class SportLocationResponseList extends Location {
 
     private Double price;
     private Date startDate;
     private Date endDate;
 
-    public SportLocationResponseForm(Location location, Double price, Date startDate, Date endDate) {
+    public SportLocationResponseList(Integer id, String name, int regionId, int countryId) {
+        super(id, name, regionId, countryId);
+    }
+
+    public SportLocationResponseList(Location location, Double price, Date startDate, Date endDate) {
         super(location.getId(), location.getName(), location.getRegionId(), location.getCountryId());
         this.price = price;
         this.startDate = startDate;

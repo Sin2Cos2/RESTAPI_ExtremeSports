@@ -1,5 +1,6 @@
 package com.attaproject.controller;
 
+import com.attaproject.dao.CountryDAO;
 import com.attaproject.dao.RegionDAO;
 import com.attaproject.model.Country;
 import com.attaproject.model.Location;
@@ -24,7 +25,7 @@ public class RegionController {
     @Autowired
     private LocationController locationController;
     @Autowired
-    private CountryController countryController;
+    private CountryDAO countryController;
 
     //GET requests
     @GetMapping
@@ -46,7 +47,7 @@ public class RegionController {
 
         Region region = regionDAO.getRegion(name);
         List<LocationResponseForm> locations = locationController.getLocations(region.getId());
-        return new RegionResponseForm(region, null);
+        return new RegionResponseForm(region, locations);
     }
 
     //POST requests

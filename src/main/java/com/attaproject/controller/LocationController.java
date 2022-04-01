@@ -4,8 +4,9 @@ import com.attaproject.dao.LocationDAO;
 import com.attaproject.model.*;
 import com.attaproject.requestForm.LocationRequest;
 import com.attaproject.responseForm.LocationResponseForm;
-import com.attaproject.responseForm.LocationSportResponseForm;
+import com.attaproject.responseForm.LocationSportResponseList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,13 @@ public class LocationController {
     @Autowired
     private LocationDAO locationDAO;
     @Autowired
-    private SportController sportController;
+    private SportController sportController = new SportController();
     @Autowired
-    private RegionController regionController;
+    @Lazy
+    private RegionController regionController = new RegionController();
     @Autowired
-    private CountryController countryController;
+    @Lazy
+    private CountryController countryController = new CountryController();
 
     //GET request
     @GetMapping
@@ -33,7 +36,7 @@ public class LocationController {
         List<Location> locations = locationDAO.getLocations();
         List<LocationResponseForm> responseForms = new ArrayList<>();
         for (Location location : locations) {
-            List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+            List<LocationSportResponseList> response = getLocationSportResponseForms(location);
             responseForms.add(new LocationResponseForm(location, response));
         }
 
@@ -44,7 +47,7 @@ public class LocationController {
     public LocationResponseForm getLocation(@PathVariable("name") String name) {
 
         Location location = locationDAO.getLocation(name);
-        List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+        List<LocationSportResponseList> response = getLocationSportResponseForms(location);
         return new LocationResponseForm(location, response);
     }
 
@@ -76,12 +79,12 @@ public class LocationController {
                 new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
     }
 
-    private List<LocationSportResponseForm> getLocationSportResponseForms(Location location) {
-        List<LocationSport> locationSports = locationDAO.getLocationsSports(location.getId());
-        List<LocationSportResponseForm> response = new ArrayList<>();
+    private List<LocationSportResponseList> getLocationSportResponseForms(Location location) {
+        List<LocationSport> locationSports = locationDAO.getLocationSports(location.getId());
+        List<LocationSportResponseList> response = new ArrayList<>();
         for (LocationSport locationSport : locationSports) {
             Sport sport = sportController.getSport(locationSport.getSportId());
-            response.add(new LocationSportResponseForm(sport, locationSport.getPrice(),
+            response.add(new LocationSportResponseList(sport, locationSport.getPrice(),
                     locationSport.getStartDate(), locationSport.getEndDate()));
         }
         return response;
@@ -92,7 +95,7 @@ public class LocationController {
         List<Location> locations = locationDAO.getLocations(region_id);
         List<LocationResponseForm> responseForms = new ArrayList<>();
         for (Location location : locations) {
-            List<LocationSportResponseForm> response = getLocationSportResponseForms(location);
+            List<LocationSportResponseList> response = getLocationSportResponseForms(location);
             responseForms.add(new LocationResponseForm(location, response));
         }
 

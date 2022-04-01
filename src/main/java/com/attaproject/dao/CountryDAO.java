@@ -1,12 +1,10 @@
 package com.attaproject.dao;
 
-import com.attaproject.controller.CountryController;
 import com.attaproject.mapper.CountryMapper;
 import com.attaproject.model.Country;
 import com.attaproject.requestForm.CountryRequest;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
 import java.util.List;
